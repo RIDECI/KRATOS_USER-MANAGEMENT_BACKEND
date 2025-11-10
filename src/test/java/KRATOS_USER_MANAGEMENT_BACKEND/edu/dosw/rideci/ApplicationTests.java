@@ -1,0 +1,13 @@
+package KRATOS_USER_MANAGEMENT_BACKEND.edu.dosw.rideci;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class ApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}
