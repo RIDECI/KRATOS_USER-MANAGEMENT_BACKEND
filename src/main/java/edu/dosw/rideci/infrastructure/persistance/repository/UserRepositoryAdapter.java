@@ -25,15 +25,9 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
             .userId(user.getUserId())
             .name(user.getName())
             .email(user.getEmail())
-            .profile(user.getProfile())
             .role(user.getRole())
             .state(user.getState())
             .phoneNumber(user.getPhoneNumber())
-            .vehicleType(user.getVehicleType())
-            .drivingLicense(user.getDrivingLicense())
-            .soat(user.getSoat())
-            .insurance(user.getInsurance())
-            .carPlate(user.getCarPlate())
             .createdAt(LocalDateTime.now())
             .build();
 
@@ -49,14 +43,8 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
         actualUser.setName(user.getName());
         actualUser.setEmail(user.getEmail());
         actualUser.setPhoneNumber(user.getPhoneNumber());
-        actualUser.setDrivingLicense(user.getDrivingLicense());
-        actualUser.setSoat(user.getSoat());
-        actualUser.setInsurance(user.getInsurance());
-        actualUser.setCarPlate(user.getCarPlate());
         actualUser.setRole(user.getRole());
         actualUser.setState(user.getState());
-        actualUser.setProfile(user.getProfile());
-        actualUser.setVehicleType(user.getVehicleType());
 
         UserDocument updatedDocument = userRepository.save(actualUser);
         return userMapper.toDomain(updatedDocument);
