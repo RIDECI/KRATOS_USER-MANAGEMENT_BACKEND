@@ -1,6 +1,8 @@
 package edu.dosw.rideci.infrastructure.controller.dto.Request;
 
-import edu.dosw.rideci.domain.model.enums.AccountState;
+import java.time.LocalDateTime;
+
+import edu.dosw.rideci.domain.model.enums.IdentificationType;
 import edu.dosw.rideci.domain.model.enums.Role;
 import lombok.Builder;
 import lombok.Data;
@@ -12,9 +14,12 @@ public class UserRequest {
     private Long userId;
     private String name;
     private String email;
+    private IdentificationType identificationType;
+    private String identificationNumber;
+    private LocalDateTime dateOfBirth;
     private String phoneNumber;
+    private String address;
 
     private Role role;
-    private AccountState state;
 
 }

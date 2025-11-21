@@ -6,6 +6,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import edu.dosw.rideci.domain.model.enums.AccountState;
+import edu.dosw.rideci.domain.model.enums.IdentificationType;
 import edu.dosw.rideci.domain.model.enums.Role;
 import lombok.Builder;
 import lombok.Data;
@@ -19,9 +20,13 @@ public class UserDocument {
     private Long userId;
     private String name;
     private String email;
+    private IdentificationType identificationType;
+    private String identificationNumber;
+    private LocalDateTime dateOfBirth;
     private String phoneNumber;
+    private String address;
     private LocalDateTime createdAt;
-
+    
     private Role role;
     private AccountState state;
     

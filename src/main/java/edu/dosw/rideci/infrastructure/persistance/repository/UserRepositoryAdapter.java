@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import edu.dosw.rideci.application.port.out.UserRepositoryOutPort;
 import edu.dosw.rideci.domain.model.User;
+import edu.dosw.rideci.domain.model.enums.AccountState;
 import edu.dosw.rideci.infrastructure.persistance.entity.UserDocument;
 import edu.dosw.rideci.infrastructure.persistance.repository.mapper.UserMapper;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,12 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
             .userId(user.getUserId())
             .name(user.getName())
             .email(user.getEmail())
+            .identificationType(user.getIdentificationType())
+            .identificationNumber(user.getIdentificationNumber())
+            .dateOfBirth(user.getDateOfBirth())
+            .address(user.getAddress())
             .role(user.getRole())
-            .state(user.getState())
+            .state(AccountState.PENDING)
             .phoneNumber(user.getPhoneNumber())
             .createdAt(LocalDateTime.now())
             .build();
@@ -42,9 +47,14 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
 
         actualUser.setName(user.getName());
         actualUser.setEmail(user.getEmail());
+        actualUser.setIdentificationType(user.getIdentificationType());
+        actualUser.setIdentificationNumber(user.getIdentificationNumber());
+        actualUser.setDateOfBirth(user.getDateOfBirth());
+        actualUser.setAddress(user.getAddress());
         actualUser.setPhoneNumber(user.getPhoneNumber());
         actualUser.setRole(user.getRole());
         actualUser.setState(user.getState());
+        actualUser.setCreatedAt(user.getCreatedAt());
 
         UserDocument updatedDocument = userRepository.save(actualUser);
         return userMapper.toDomain(updatedDocument);
