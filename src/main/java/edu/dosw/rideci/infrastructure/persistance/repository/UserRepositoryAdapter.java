@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
+import edu.dosw.rideci.application.events.UserEvent;
 import edu.dosw.rideci.application.port.out.UserRepositoryOutPort;
 import edu.dosw.rideci.domain.model.User;
 import edu.dosw.rideci.domain.model.enums.AccountState;
@@ -18,6 +19,7 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
     
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final RabbitEventPublisher eventPublisher;
 
     @Override
     public User save(User user) {
@@ -37,6 +39,11 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
             .build();
 
         UserDocument savedDocument = userRepository.save(userDocument);
+
+        UserEvent userCreatedEvent = userMapper.toUserEvent(savedDocument);
+
+        eventPublisher.publish(userCreatedEvent, "user.created");
+        
         return userMapper.toDomain(savedDocument);
     }
 
@@ -53,16 +60,25 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
         actualUser.setAddress(user.getAddress());
         actualUser.setPhoneNumber(user.getPhoneNumber());
         actualUser.setRole(user.getRole());
-        actualUser.setState(user.getState());
-        actualUser.setCreatedAt(user.getCreatedAt());
 
         UserDocument updatedDocument = userRepository.save(actualUser);
+
+        UserEvent userUpdatedEvent = userMapper.toUserEvent(updatedDocument);
+
+        eventPublisher.publish(userUpdatedEvent, "user.updated");
+
         return userMapper.toDomain(updatedDocument);
     }
 
     @Override
     public void deleteById(Long userId) {
         userRepository.deleteById(userId);
+
+        UserEvent userDeletedEvent = UserEvent.builder()
+            .userId(userId)
+            .build();
+
+        eventPublisher.publish(userDeletedEvent,"user.deleted");
     }
 
     @Override
