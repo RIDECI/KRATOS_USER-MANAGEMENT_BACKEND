@@ -37,7 +37,7 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
             .phoneNumber(user.getPhoneNumber())
             .createdAt(LocalDateTime.now())
             .build();
-
+        System.out.println("Saving user: " + userDocument);
         UserDocument savedDocument = userRepository.save(userDocument);
 
         UserEvent userCreatedEvent = userMapper.toUserEvent(savedDocument);

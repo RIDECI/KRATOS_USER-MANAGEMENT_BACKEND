@@ -1,6 +1,9 @@
 package edu.dosw.rideci.application.events.listener;
 
+import java.time.LocalDateTime;
+
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.stereotype.Component;
 
 import edu.dosw.rideci.application.events.UserEvent;
 import edu.dosw.rideci.application.port.in.CreateUserUseCase;
@@ -13,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Data
 @RequiredArgsConstructor
+@Component
 @Slf4j
 public class UserRegisteredListener {
 
@@ -20,6 +24,7 @@ public class UserRegisteredListener {
 
     @RabbitListener(queues = "user.sync.queue")
     public void handleUserRegistered(UserEvent event) {
+        System.out.println("Received UserEvent: " + event);
         log.info("UserRegisteredListener handled event: {}", event);
         User eventUser = User.builder()
             .userId(event.getUserId())
@@ -29,9 +34,10 @@ public class UserRegisteredListener {
             .identificationNumber(event.getIdentificationNumber())
             .phoneNumber(event.getPhoneNumber())
             .address(event.getAddress())
+            .dateOfBirth(LocalDateTime.now())
             .role(Role.valueOf(event.getRole()))
             .build();
-        createUserUseCase.createUser(eventUser);
+        createUserUseCase.createUser(eventUser);//MALPARIDO PANA RABBIT
     }
     
 }
