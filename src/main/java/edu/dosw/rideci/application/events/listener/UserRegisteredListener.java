@@ -1,5 +1,12 @@
 package edu.dosw.rideci.application.events.listener;
 
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+
+import edu.dosw.rideci.application.events.UserEvent;
+import edu.dosw.rideci.application.port.in.CreateUserUseCase;
+import edu.dosw.rideci.domain.model.User;
+import edu.dosw.rideci.domain.model.enums.IdentificationType;
+import edu.dosw.rideci.domain.model.enums.Role;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,9 +16,22 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class UserRegisteredListener {
 
-    public void handleUserRegistered() {
-        
-        log.info("UserRegisteredListener handled event");
+    private final CreateUserUseCase createUserUseCase;
+
+    @RabbitListener(queues = "user.sync.queue")
+    public void handleUserRegistered(UserEvent event) {
+        log.info("UserRegisteredListener handled event: {}", event);
+        User eventUser = User.builder()
+            .userId(event.getUserId())
+            .name(event.getName())
+            .email(event.getEmail())
+            .identificationType(IdentificationType.valueOf(event.getIdentificationType()))
+            .identificationNumber(event.getIdentificationNumber())
+            .phoneNumber(event.getPhoneNumber())
+            .address(event.getAddress())
+            .role(Role.valueOf(event.getRole()))
+            .build();
+        createUserUseCase.createUser(eventUser);
     }
     
 }
