@@ -14,7 +14,7 @@ public class RabbitConfig {
 
     public static final String QUEUE_USER_CREATED = "user.sync.queue";
     public static final String EXCHANGE_USER = "user.exchange";
-    public static final String ROUTING_KEY_USER_CREATED = "user.#"; //TODO CON user al inicio.
+    public static final String ROUTING_KEY_USER_CREATED = "auth.user.#"; //TODO CON user al inicio.
     
     @Bean
     public Queue userCreatedQueue() {
