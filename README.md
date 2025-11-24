@@ -44,70 +44,19 @@ Microservicio encargado de la **gestión completa de usuarios y sus perfiles** e
 
 **Creación y Administración:**
 - Creación y actualización de perfiles de usuario
-- Gestión de información personal (nombre, teléfono, dirección, foto de perfil)
-- Administración de perfiles según tipo: Estudiante, Profesor, Empleado Administrativo
+- Gestión de información personal (nombre, teléfono, dirección)
+- Administración de perfiles según tipo: Estudiante, Profesor, Administrativo
 - Eliminación lógica de cuentas de usuario
 - Consulta y búsqueda de usuarios por diferentes criterios
 
-**Roles y Tipos de Movilidad:**
+**Roles:**
 - Asignación y modificación de roles (estudiante, profesor, administrativo)
-- Gestión de tipos de movilidad dinámicos (conductor, pasajero, acompañante)
-- Configuración de permisos según tipo de usuario
-- Cambio de roles con validación de permisos
-
-### Verificación de Conductores
-
-**Gestión de Documentos:**
-- Registro y validación de licencia de conducción
-- Verificación de información del vehículo (marca, modelo, color, placa)
-- Validación de documentos de seguro vehicular (SOAT)
-- Almacenamiento seguro de documentos digitalizados
-- Sistema de aprobación/rechazo de documentos por administrador
-- Notificaciones sobre estado de verificación
-
-**Información Vehicular:**
-- Registro de múltiples vehículos por conductor
-- Actualización de datos del vehículo
-- Gestión de placas visibles en la aplicación
-- Historial de vehículos registrados
-
-### Sistema de Reputación
-
-**Calificaciones:**
-- Registro de calificaciones recibidas (escala 1-5)
-- Cálculo de promedio de reputación por usuario
-- Gestión de comentarios y observaciones
-- Historial completo de calificaciones
-
-**Distintivos y Reconocimientos:**
-- Asignación automática de distintivos ("Conductor confiable", "Pasajero frecuente")
-- Sistema de logros según comportamiento
-- Visualización de reconocimientos en perfil
-- Estadísticas de reputación detalladas
-
-### Administración de Usuarios
-
-**Control Administrativo:**
-- Aprobación de nuevos registros de usuarios
-- Validación de conductores antes de habilitarlos
-- Suspensión temporal o permanente de cuentas
-- Bloqueo de usuarios por incumplimiento de políticas
-- Reactivación de cuentas suspendidas
-- Gestión de reportes de comportamiento
-
-**Monitoreo y Auditoría:**
-- Registro de actividad de usuarios (última conexión, acciones realizadas)
-- Historial de cambios en perfiles
-- Seguimiento de modificaciones administrativas
-- Logs de acciones críticas
-- Reportes de usuarios activos/inactivos
 
 ### Integración con Otros Microservicios
 
 **Comunicación:**
 - Validación de credenciales para el microservicio de autenticación
 - Provisión de información de usuario para generación de tokens JWT
-- Consulta de datos de usuario para módulo de viajes
 - Sincronización de reputación con módulo de calificaciones
 - Actualización de estadísticas con módulo de sostenibilidad
 
