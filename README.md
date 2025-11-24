@@ -25,15 +25,10 @@
   * [Convenciones de Commits](#convenciones-de-commits)
 * [Arquitectura del Proyecto](#arquitectura-del-proyecto)
   * [Estructura de Capas](#estructura-de-capas)
-  * [Flujo de una Petición](#flujo-de-una-petición)
 * [Arquitectura Limpia - Organización de Capas](#arquitectura-limpia---organización-de-capas)
 * [Diagramas del Módulo](#diagramas-del-módulo)
 * [Instalación](#instalación)
-* [Configuración](#configuración)
-* [Uso](#uso)
 * [API Endpoints](#api-endpoints)
-* [Testing](#testing)
-* [Despliegue](#despliegue)
 
 ---
 
@@ -123,13 +118,11 @@ Microservicio encargado de la **gestión completa de usuarios y sus perfiles** e
 | **Categoría**              | **Tecnologías**                                          |
 | -------------------------- | -------------------------------------------------------- |
 | **Backend**                | Java 17, Spring Boot 3.5.7, Spring Data, Maven           |
-| **Base de Datos**          | MongoDB, PostgreSQL (Opcional)                           |
-| **Almacenamiento**         | AWS S3 / Azure Blob Storage (documentos e imágenes)      |
-| **Validación**             | Bean Validation, Custom Validators                       |
-| **Testing**                | JUnit 5, Mockito, Testcontainers, Jacoco, SonarQube     |
+| **Base de Datos**          | MongoDB                          |                   |
+| **Testing**                | JUnit 5, Mockito, Jacoco, SonarQube     |
 | **Documentación**          | Swagger UI, Postman                                      |
-| **DevOps y Deploy**        | Docker, Kubernetes (K8s), GitHub Actions, Azure, Vercel  |
-| **Comunicación**           | REST API, Event-Driven Architecture (opcional)           |
+| **DevOps y Deploy**        | Docker, Kubernetes (K8s), GitHub Actions, Railway |
+| **Comunicación**           | REST API, Event-Driven Architecture con RabbitMQ           |
 | **Gestión y Colaboración** | Git/GitHub, Figma, Slack, Jira                           |
 
 ---
@@ -161,10 +154,11 @@ Se implementa una estrategia de versionamiento basada en **GitFlow**, garantizan
 
 ## Convenciones de Nomenclatura
 
-### Feature Branches
+### Develop Branches
 
 ```
-feature/[nombre-funcionalidad]-kratos-um_[codigo-jira]
+feature/[nombre-funcionalidad]
+
 ```
 
 **Ejemplos:**
@@ -172,44 +166,12 @@ feature/[nombre-funcionalidad]-kratos-um_[codigo-jira]
 ```
 - feature/driver-verification-kratos-um_23
 - feature/reputation-system-kratos-um_35
+
 ```
 
 **Reglas:**
 
-* Formato: *kebab-case*
-* Incluir código Jira
 * Descripción breve y clara
-* Longitud máxima: 50 caracteres
-
----
-
-### Release Branches
-
-```
-release/[version]
-```
-
-**Ejemplos:**
-
-```
-- release/1.0.0
-- release/1.1.0-beta
-```
-
----
-
-### Hotfix Branches
-
-```
-hotfix/[descripcion-breve-del-fix]
-```
-
-**Ejemplos:**
-
-```
-- hotfix/fix-profile-update
-- hotfix/document-validation-patch
-```
 
 ---
 
@@ -218,14 +180,14 @@ hotfix/[descripcion-breve-del-fix]
 ### Formato Estándar
 
 ```
-[codigo-jira] [tipo]: [descripción breve de la acción]
+[tipo]: [descripción breve de la acción]
 ```
 
 **Ejemplos:**
 
 ```
-23-feat: implementar verificación de documentos de conductor
-35-fix: corregir cálculo de promedio de reputación
+feat: implementar verificación de documentos de conductor
+fix: corregir cálculo de promedio de reputación
 ```
 
 ---
@@ -234,17 +196,16 @@ hotfix/[descripcion-breve-del-fix]
 
 | **Tipo**   | **Descripción**                      | **Ejemplo**                                           |
 | ----------- | ------------------------------------ | ----------------------------------------------------- |
-| `feat`      | Nueva funcionalidad                  | `23-feat: agregar endpoint de registro de vehículo`   |
-| `fix`       | Corrección de errores                | `35-fix: solucionar error en actualización de perfil` |
-| `docs`      | Cambios en documentación             | `41-docs: actualizar documentación de API`            |
-| `refactor`  | Refactorización sin cambio funcional | `47-refactor: optimizar consulta de usuarios`         |
-| `test`      | Pruebas unitarias o de integración   | `53-test: agregar tests para servicio de reputación`  |
-| `chore`     | Mantenimiento o configuración        | `59-chore: actualizar dependencias de Spring`         |
+| `feat`      | Nueva funcionalidad                  | `feat: agregar endpoint de registro de vehículo`   |
+| `fix`       | Corrección de errores                | `fix: solucionar error en actualización de perfil` |
+| `docs`      | Cambios en documentación             | `docs: actualizar documentación de API`            |
+| `refactor`  | Refactorización sin cambio funcional | `refactor: optimizar consulta de usuarios`         |
+| `test`      | Pruebas unitarias o de integración   | `test: agregar tests para servicio de reputación`  |
+| `chore`     | Mantenimiento o configuración        | `chore: actualizar dependencias de Spring`         |
 
 **Reglas:**
 
 * Un commit = una acción completa
-* Máximo **72 caracteres** por línea
 * Usar modo imperativo ("agregar", "corregir", etc.)
 * Descripción clara de qué y dónde
 * Commits pequeños y frecuentes
@@ -266,49 +227,37 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 
 ```
 📂 kratos_user_management_backend
- ┣ 📂 domain/
- ┃ ┣ 📄 Entities/
- ┃ ┣ 📄 ValueObjects/
- ┃ ┣ 📄 Enums/
- ┃ ┣ 📄 Services/
- ┃ ┗ 📄 Events/
+ ┃
  ┣ 📂 application/
- ┃ ┣ 📄 UseCases/
- ┃ ┣ 📄 DTOs/
- ┃ ┣ 📄 Mappers/
- ┃ ┗ 📄 Exceptions/
+ ┃  ┣ 📂 events/
+ ┃  ┃  ┣ 📂 listener/
+ ┃  ┃  ┣ 📄 Event
+ ┃  ┣ 📂 mapper/
+ ┃  ┣ 📂 port/
+ ┃  ┃  ┣ 📂 in/
+ ┃  ┃  ┣ 📂 out/
+ ┃  ┣ 📂 service/
+ ┃
+ ┣ 📂 domain/
+ ┃  ┣ 📂 model/
+ ┃     ┣ 📂 enums/
+ ┃     ┣ 📄 Modelo De Negocio
+ ┃
  ┣ 📂 infrastructure/
- ┃ ┣ 📄 API/Controllers/
- ┃ ┣ 📄 Database/
- ┃ ┣ 📄 Repositories/
- ┃ ┣ 📄 Config/
- ┃ ┣ 📄 Security/
- ┃ ┣ 📄 ExternalServices/
- ┃ ┗ 📄 ExceptionHandlers/
+ ┃  ┣ 📂 config/
+ ┃  ┣ 📂 controller/
+ ┃  ┃  ┣ 📂 dto/
+ ┃  ┃   ┃  ┣ 📂 request/
+ ┃  ┃   ┃  ┣ 📂 response/
+ ┃  ┃   ┣ 📄 Controller
+ ┃  ┃
+ ┃  ┣ 📂 persistance/
+ ┃     ┣ 📂 entity/
+ ┃     ┣ 📂 repository/
+ ┃        ┣ 📂 mapper/
+ ┃
  ┗ 📄 pom.xml
 ```
----
-
-## Flujo de una Petición
-
-```
-1. Cliente envía petición HTTP (ej: actualizar perfil)
-   ↓
-2. Controller (Infrastructure) - Recibe y valida el request
-   ↓
-3. Use Case (Application) - UpdateUserProfile orquesta la lógica
-   ↓
-4. Domain Service - Aplica reglas de negocio (validaciones)
-   ↓
-5. Repository Interface (Domain) - Contrato de persistencia
-   ↓
-6. Repository Implementation (Infrastructure) - Actualiza en MongoDB
-   ↓
-7. Event (Domain) - Se emite "UserProfileUpdated"
-   ↓
-8. Response fluye de vuelta transformándose en cada capa
-```
-
 ---
 
 ## Arquitectura Limpia - Organización de Capas
@@ -319,12 +268,8 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 
 **Contiene:**
 
-- **Entities:** User, Profile, Vehicle, Document, Reputation - objetos principales con sus reglas de negocio
-- **Value Objects:** Email, PhoneNumber, LicensePlate - objetos inmutables con validaciones específicas
-- **Enums:** UserRole (estudiante, profesor, administrativo), MobilityType (conductor, pasajero, acompañante), DocumentType, UserStatus
-- **Repositories (interfaces):** Contratos para acceso a datos sin implementación técnica
-- **Services:** Lógica compleja del dominio (cálculo de reputación, validación de documentos)
-- **Events:** UserCreated, ProfileUpdated, DriverVerified, UserSuspended
+- **Entities:** User.
+- **Enums:** Role (STUDENT, PROFFESOR, ADMINISTRATOR), AccountState (ACTIVE, INACTIVE, PENDING, SUSPENDED), IdentificationType (TI, CC, PP, CE).
 
 **Principio clave:** Esta capa NO debe depender de frameworks, bases de datos o tecnologías externas.
 
@@ -336,18 +281,16 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 
 **Contiene:**
 
-- **Use Cases:** 
-  - CreateUserProfile: Crea un nuevo perfil de usuario
-  - UpdateUserProfile: Actualiza información personal
-  - VerifyDriverDocuments: Valida documentos de conductor
-  - CalculateReputation: Calcula y actualiza reputación
-  - SuspendUser: Suspende un usuario
-  - AssignMobilityType: Asigna tipos de movilidad
-- **DTOs:** CreateUserRequest, UpdateProfileRequest, UserResponse, DriverVerificationResponse
-- **Mappers:** Conversión entre entidades del dominio y DTOs
-- **Exceptions:** UserNotFoundException, InvalidDocumentException, UnauthorizedException
-
-**Ventaja principal:** Los casos de uso son independientes del framework y pueden ser reutilizados.
+- **Use Cases:**
+  - CreateUserUseCase: Crea un nuevo usuario
+  - UpdateUserUseCase: Actualiza información personal
+  - DeleteUserUseCase: Eliminar Usuario
+  - GetUserUseCase: Obtener usuario por id
+  - GetAllUsersUseCase: Obtener todos los usuarios
+- **OUTs:** EventPublisher, UserRepositoryOutPort
+- **LISTENERs:** UserRegisteredListener
+- **Mapper:** UserMapperApplication
+- **Service:** UserService
 
 ---
 
@@ -356,16 +299,12 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 **Propósito:** Implementa los **detalles técnicos** que permiten que el sistema funcione. Maneja persistencia, almacenamiento de archivos, comunicación externa y configuración.
 
 **Contiene:**
-
-- **API/Controllers:** Endpoints REST para gestión de usuarios, perfiles, conductores, reputación
-- **Database:** Configuración de MongoDB, modelos con anotaciones específicas
-- **Repositories:** Implementaciones usando Spring Data MongoDB
-- **Config:** Configuración de CORS, beans, propiedades de aplicación
-- **Storage:** Integración con AWS S3 o Azure Blob Storage para documentos/imágenes
-- **External Services:** Comunicación con microservicio de autenticación, envío de emails
-- **Exception Handlers:** Manejo centralizado de errores y respuestas HTTP
-
-**Característica:** Esta capa SÍ depende de frameworks y tecnologías (Spring Boot, MongoDB, AWS S3, etc.).
+- **config:** Configuración RabbitConfig
+- **API/Controllers:** Endpoints REST para gestión de usuarios.
+- **DTOs:** UserRequest, UserResponse
+- **Repositories:** Implementaciones usando Spring Data MongoDB (UserRepository)
+- **External Services:** RabbitEventPublisher
+**Característica:** Esta capa SÍ depende de frameworks y tecnologías (Spring Boot, MongoDB, Railway, etc.).
 
 ---
 
@@ -405,7 +344,7 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 
 ### Diagrama de Componentes Específico
 
-![Diagrama de Componentes](docs/images/diagrama_componentes.png)
+![Diagrama de Componentes](docs/uml/diagrama_componentes.png)
 
 **Explicación:**
 
@@ -439,7 +378,7 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
 
 - Java 17
 - Maven
-- MongoDB 
+- MongoDB
 - Git
 
 ### Clonar el repositorio
@@ -457,57 +396,32 @@ mvn clean install
 
 ---
 
-## Configuración
-
-*[Sección pendiente de completar con variables de entorno, configuración de base de datos, AWS S3, etc.]*
-
----
-
 ## Uso
 
-*[Sección pendiente de completar con instrucciones de ejecución local, desarrollo, etc.]*
+```bash
+mvn clean install
+```
+Para ejecutar el proyecto:
+
+```bash
+mvn spring-boot:run
+```
+Ó:
+
+```bash
+docker compose up -d
+```
 
 ---
 
 ## API Endpoints
 
-*[Sección pendiente de completar con documentación de endpoints principales]*
-
 ### Gestión de Usuarios
-- `POST /api/users` - Crear perfil de usuario
-- `GET /api/users/{id}` - Obtener usuario por ID
-- `PUT /api/users/{id}` - Actualizar perfil de usuario
-- `DELETE /api/users/{id}` - Eliminar usuario (lógico)
-- `GET /api/users` - Listar usuarios con filtros
-
-### Gestión de Conductores
-- `POST /api/drivers/verify` - Enviar documentos para verificación
-- `PUT /api/drivers/{id}/documents` - Actualizar documentos
-- `POST /api/drivers/{id}/vehicles` - Registrar vehículo
-- `GET /api/drivers/{id}/vehicles` - Listar vehículos del conductor
-
-### Sistema de Reputación
-- `POST /api/reputation/rating` - Registrar calificación
-- `GET /api/reputation/user/{id}` - Obtener reputación de usuario
-- `GET /api/reputation/user/{id}/history` - Historial de calificaciones
-
-### Administración
-- `PUT /api/admin/users/{id}/suspend` - Suspender usuario
-- `PUT /api/admin/users/{id}/activate` - Activar usuario
-- `PUT /api/admin/drivers/{id}/approve` - Aprobar conductor
-- `PUT /api/admin/drivers/{id}/reject` - Rechazar conductor
-
----
-
-## Testing
-
-*[Sección pendiente de completar con instrucciones de ejecución de tests, cobertura, etc.]*
-
----
-
-## Despliegue
-
-*[Sección pendiente de completar con instrucciones de despliegue en Azure, configuración de K8s, etc.]*
+- `POST /users` - Crear perfil de usuario
+- `GET /users/{id}` - Obtener usuario por ID
+- `PUT /users/{id}` - Actualizar perfil de usuario
+- `DELETE /users/{id}` - Eliminar usuario (lógico)
+- `GET /users/allUsers` - Listar usuarios con filtros
 
 ---
 
