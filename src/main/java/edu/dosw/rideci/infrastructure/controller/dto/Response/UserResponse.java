@@ -5,11 +5,15 @@ import java.time.LocalDateTime;
 import edu.dosw.rideci.domain.model.enums.AccountState;
 import edu.dosw.rideci.domain.model.enums.IdentificationType;
 import edu.dosw.rideci.domain.model.enums.Role;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserResponse {
     
     private Long userId;

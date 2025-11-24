@@ -3,6 +3,7 @@ package edu.dosw.rideci.infrastructure.persistance.entity;
 import java.time.LocalDateTime;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import edu.dosw.rideci.domain.model.enums.AccountState;
@@ -19,6 +20,7 @@ public class UserDocument {
     @Id
     private Long userId;
     private String name;
+    @Indexed(unique = true)
     private String email;
     private IdentificationType identificationType;
     private String identificationNumber;
