@@ -373,5 +373,13 @@ docker compose up -d
 - `GET /users/allUsers` - Listar usuarios con filtros
 
 ---
+Pruebas Unitarias
 
+![img.png](docs/img.png)
+
+---
+
+Reporte Jacoco
+
+![img.png](docs/img2.png)
 **RidECI** - Conectando a la comunidad para moverse de forma segura, económica y sostenible.
