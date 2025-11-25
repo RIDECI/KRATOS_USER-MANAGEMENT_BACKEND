@@ -34,7 +34,6 @@ public class UserRegisteredListener {
             .identificationNumber(event.getIdentificationNumber())
             .phoneNumber(event.getPhoneNumber())
             .address(event.getAddress())
-            .dateOfBirth(LocalDateTime.now())
             .role(Role.valueOf(event.getRole()))
             .build();
         createUserUseCase.createUser(eventUser);//MALPARIDO PANA RABBIT

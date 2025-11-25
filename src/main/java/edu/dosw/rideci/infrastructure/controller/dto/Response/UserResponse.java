@@ -21,7 +21,6 @@ public class UserResponse {
     private String email;
     private IdentificationType identificationType;
     private String identificationNumber;
-    private LocalDateTime dateOfBirth;
     private String phoneNumber;
     private String address;
     private LocalDateTime createdAt;

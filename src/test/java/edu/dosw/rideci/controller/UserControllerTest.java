@@ -67,7 +67,6 @@ class UserControllerTest {
     private UserResponse userResponse;
     private User userDomain;
 
-    LocalDateTime date = LocalDateTime.of(2005, 5, 4, 12, 5, 30);
     LocalDateTime now = LocalDateTime.of(2024, 11, 23, 18, 30, 0);
     List<User> userList;
     List<UserResponse> userResponseList;
@@ -81,7 +80,6 @@ class UserControllerTest {
             userRequest.setEmail("juan.puentes@mail.escuelaing.edu.co");
             userRequest.setIdentificationType(IdentificationType.CC);
             userRequest.setIdentificationNumber("1011084070");
-            userRequest.setDateOfBirth(date);
             userRequest.setPhoneNumber("3235207883");
             userRequest.setAddress("Calle 187A # 8 - 46");
             userRequest.setRole(Role.STUDENT);
@@ -92,7 +90,6 @@ class UserControllerTest {
             userResponse.setEmail("juan.puentes@mail.escuelaing.edu.co");
             userResponse.setIdentificationType(IdentificationType.CC);
             userResponse.setIdentificationNumber("1011084070");
-            userResponse.setDateOfBirth(date);
             userResponse.setPhoneNumber("3235207883");
             userResponse.setAddress("Calle 187A # 8 - 46");
             userResponse.setRole(Role.STUDENT);
@@ -105,7 +102,6 @@ class UserControllerTest {
             userDomain.setEmail("juan.puentes@mail.escuelaing.edu.co");
             userDomain.setIdentificationType(IdentificationType.CC);
             userDomain.setIdentificationNumber("1011084070");
-            userDomain.setDateOfBirth(date);
             userDomain.setPhoneNumber("3235207883");
             userDomain.setAddress("Calle 187A # 8 - 46");
             userDomain.setRole(Role.STUDENT);
@@ -131,7 +127,6 @@ class UserControllerTest {
                         "email": "juan.puentes@mail.escuelaing.edu.co",
                         "identificationType": "CC",
                         "identificationNumber": "1011084070",
-                        "dateOfBirth": "2005-05-04T12:05:30",
                         "phoneNumber": "3235207883",
                         "address": "Calle 187A # 8 - 46",
                         "role": "STUDENT"
@@ -145,7 +140,6 @@ class UserControllerTest {
             .andExpect(jsonPath("$.email").value("juan.puentes@mail.escuelaing.edu.co"))
             .andExpect(jsonPath("$.identificationType").value("CC"))
             .andExpect(jsonPath("$.identificationNumber").value("1011084070"))
-            .andExpect(jsonPath("$.dateOfBirth").value("2005-05-04T12:05:30"))
             .andExpect(jsonPath("$.phoneNumber").value("3235207883"))
             .andExpect(jsonPath("$.address").value("Calle 187A # 8 - 46"))
             .andExpect(jsonPath("$.role").value("STUDENT"))
@@ -170,7 +164,6 @@ class UserControllerTest {
                         "email": "juan.puentes@mail.escuelaing.edu.co",
                         "identificationType": "TI",
                         "identificationNumber": "1011084070",
-                        "dateOfBirth": "2005-05-04T12:05:30",
                         "phoneNumber": "3235207883",
                         "address": "Calle 187A # 8 - 46",
                         "role": "STUDENT"
@@ -183,7 +176,6 @@ class UserControllerTest {
             .andExpect(jsonPath("$.email").value("juan.puentes@mail.escuelaing.edu.co"))
             .andExpect(jsonPath("$.identificationType").value("CC"))
             .andExpect(jsonPath("$.identificationNumber").value("1011084070"))
-            .andExpect(jsonPath("$.dateOfBirth").value("2005-05-04T12:05:30"))
             .andExpect(jsonPath("$.phoneNumber").value("3235207883"))
             .andExpect(jsonPath("$.address").value("Calle 187A # 8 - 46"))
             .andExpect(jsonPath("$.role").value("STUDENT"))
@@ -218,7 +210,6 @@ class UserControllerTest {
             .andExpect(jsonPath("$.email").value("juan.puentes@mail.escuelaing.edu.co"))
             .andExpect(jsonPath("$.identificationType").value("CC"))
             .andExpect(jsonPath("$.identificationNumber").value("1011084070"))
-            .andExpect(jsonPath("$.dateOfBirth").value("2005-05-04T12:05:30"))
             .andExpect(jsonPath("$.phoneNumber").value("3235207883"))
             .andExpect(jsonPath("$.address").value("Calle 187A # 8 - 46"))
             .andExpect(jsonPath("$.role").value("STUDENT"))
@@ -240,7 +231,6 @@ class UserControllerTest {
             .andExpect(jsonPath("$[0].email").value("juan.puentes@mail.escuelaing.edu.co"))
             .andExpect(jsonPath("$[0].identificationType").value("CC"))
             .andExpect(jsonPath("$[0].identificationNumber").value("1011084070"))
-            .andExpect(jsonPath("$[0].dateOfBirth").value("2005-05-04T12:05:30"))
             .andExpect(jsonPath("$[0].phoneNumber").value("3235207883"))
             .andExpect(jsonPath("$[0].address").value("Calle 187A # 8 - 46"))
             .andExpect(jsonPath("$[0].role").value("STUDENT"))

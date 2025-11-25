@@ -1,7 +1,5 @@
 package edu.dosw.rideci.infrastructure.controller.dto.Request;
 
-import java.time.LocalDateTime;
-
 import edu.dosw.rideci.domain.model.enums.IdentificationType;
 import edu.dosw.rideci.domain.model.enums.Role;
 import lombok.AllArgsConstructor;
@@ -20,7 +18,6 @@ public class UserRequest {
     private String email;
     private IdentificationType identificationType;
     private String identificationNumber;
-    private LocalDateTime dateOfBirth;
     private String phoneNumber;
     private String address;
 

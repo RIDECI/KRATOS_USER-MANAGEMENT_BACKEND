@@ -30,7 +30,6 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
             .email(user.getEmail())
             .identificationType(user.getIdentificationType())
             .identificationNumber(user.getIdentificationNumber())
-            .dateOfBirth(user.getDateOfBirth())
             .address(user.getAddress())
             .role(user.getRole())
             .state(AccountState.PENDING)
@@ -56,7 +55,6 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
         actualUser.setEmail(user.getEmail());
         actualUser.setIdentificationType(user.getIdentificationType());
         actualUser.setIdentificationNumber(user.getIdentificationNumber());
-        actualUser.setDateOfBirth(user.getDateOfBirth());
         actualUser.setAddress(user.getAddress());
         actualUser.setPhoneNumber(user.getPhoneNumber());
         actualUser.setRole(user.getRole());
