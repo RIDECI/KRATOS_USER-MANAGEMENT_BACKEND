@@ -1,7 +1,5 @@
 package edu.dosw.rideci.application.events.listener;
 
-import java.time.LocalDateTime;
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -36,7 +34,7 @@ public class UserRegisteredListener {
             .address(event.getAddress())
             .role(Role.valueOf(event.getRole()))
             .build();
-        createUserUseCase.createUser(eventUser);//MALPARIDO PANA RABBIT
+        createUserUseCase.createUser(eventUser);
     }
     
 }
