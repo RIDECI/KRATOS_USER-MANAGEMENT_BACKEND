@@ -1,6 +1,6 @@
 # 👥 KRATOS - User Management Backend
 
-Microservice in charge of the **complete management of users and their profiles** on the **RidECI** platform. Manages personal information, roles, mobility types, document verification, reputation and the complete life cycle of users within the system.
+Microservice in charge of the **complete management of users** on the **RidECI** platform.
 
 ## 👥 Developers
 
@@ -391,11 +391,11 @@ This section guides you through setting ip the project locally. This project req
 ### Clone & open repository
 
 ``` bash
-git clone https://github.com/RIDECI/NEMESIS_ROUTES_AND_TRACKING_BACKEND.git
+git clone https://github.com/RIDECI/KRATOS_USER-MANAGEMENT_BACKEND.git
 ```
 
 ``` bash
-cd NEMESIS_ROUTES_AND_TRACKING_BACKEND
+cd KRATOS_USER-MANAGEMENT_BACKEND
 ```
 
 You can open it on your favorite IDE
