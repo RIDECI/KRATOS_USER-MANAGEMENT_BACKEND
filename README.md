@@ -378,7 +378,7 @@ Testing is a essential part of the project functionability, this part will show 
 
 
 ### 🔍 Static Analysis (SonarQube)
-![SonarQube](./docs/uml/)
+![SonarQube](./docs/uml/sonar.png)
 
 # 🚀 Getting Started
 
