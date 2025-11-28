@@ -37,8 +37,6 @@
 			src/**/configurators/**,
 			**/CorsConfig.java,
 			**/KratosUserManagementBackendApplication.java,
-			**/RabbitConfig.java,
-			**/RabbitEventPublisher.java,
 			**/UserService.java
 		</sonar.coverage.exclusions>
 
