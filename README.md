@@ -1,10 +1,8 @@
-# KRATOS_USER-MANAGEMENT_BACKEND
+# 👥 KRATOS - User Management Backend
 
-## Microservicio de Gestión de Usuarios - RidECI
+Microservice in charge of the **complete management of users and their profiles** on the **RidECI** platform. Manages personal information, roles, mobility types, document verification, reputation and the complete life cycle of users within the system.
 
----
-
-## Desarrolladores
+## 👥 Developers
 
 * David Santiago Palacios Pinzón
 * Juan Carlos Leal Cruz
@@ -14,165 +12,75 @@
 
 ---
 
-## Tabla de Contenidos
+## 📑 Content Table
 
-* [Descripción](#descripción)
-* [Características](#características)
-* [Tecnologías Utilizadas](#tecnologías-utilizadas)
-* [Estrategia de Versionamiento y Branching](#estrategia-de-versionamiento-y-branching)
-  * [Estrategia de Ramas (Git Flow)](#estrategia-de-ramas-git-flow)
-  * [Convenciones de Nomenclatura](#convenciones-de-nomenclatura)
-  * [Convenciones de Commits](#convenciones-de-commits)
-* [Arquitectura del Proyecto](#arquitectura-del-proyecto)
-  * [Estructura de Capas](#estructura-de-capas)
-* [Arquitectura Limpia - Organización de Capas](#arquitectura-limpia---organización-de-capas)
-* [Diagramas del Módulo](#diagramas-del-módulo)
-* [Instalación](#instalación)
-* [API Endpoints](#api-endpoints)
+1. [Project Architecture](#-project-architecture)
+    - [Hexagonal Structure](#-clean---hexagonal-structure)
+2. [API Documentation](#-api-endpoints)
+    - [Endpoints](#-api-endpoints)
+3. [Input & Output Data](#input-and-output-data)
+4. [Microservices Integration](#-connections-with-other-microservices)
+5. [Technologies](#technologies)
+6. [Branch Strategy](#-branches-strategy--structure)
+7. [System Architecture & Design](#-system-architecture--design) 
+8. [Getting Started](#-getting-started) 
+9. [Testing](#-testing)
 
 ---
 
-## Descripción
+## 🏛️ Project Architecture
 
-Microservicio encargado de la **gestión completa de usuarios y sus perfiles** en la plataforma **RidECI**. Administra la información personal, roles, tipos de movilidad, verificación de documentos, reputación y el ciclo de vida completo de los usuarios dentro del sistema.
+The KRATOS - User Management have a unacoplated hexagonal - clean architecture where looks for isolate the business logic with the other part of the app dividing it in multiple components:
 
----
+### 🧠 DOMAIN (Core)
 
-## Características
+**Purpose:** It represents the **core of the business** and contains the most important concepts of the application. It defines **WHAT** the system does, not **HOW** it does it.
 
-### Gestión de Perfiles de Usuario
+**Contains:**
 
-**Creación y Administración:**
-- Creación y actualización de perfiles de usuario
-- Gestión de información personal (nombre, teléfono, dirección)
-- Administración de perfiles según tipo: Estudiante, Profesor, Administrativo
-- Eliminación lógica de cuentas de usuario
-- Consulta y búsqueda de usuarios por diferentes criterios
+- **Entities:** User.
+- **Enums:** Role (STUDENT, TEACHER, ADMINISTRATOR), AccountState (ACTIVE, INACTIVE, PENDING, SUSPENDED), IdentificationType (TI, CC, PP, CE).
 
-**Roles:**
-- Asignación y modificación de roles (estudiante, profesor, administrativo)
+**Key principle:** This layer should NOT depend on external frameworks, databases or technologies.
 
-### Integración con Otros Microservicios
+### 🎯 APPLICATION (Aplicación)
 
-**Comunicación:**
-- Validación de credenciales para el microservicio de autenticación
-- Provisión de información de usuario para generación de tokens JWT
-- Sincronización de reputación con módulo de calificaciones
-- Actualización de estadísticas con módulo de sostenibilidad
+**Purpose:** Encapsulates the **application logic** and defines the **use cases** of the system. Orchestrate how the domain is used to solve specific problems.
 
----
+**Contains:**
 
-## Tecnologías Utilizadas
+- **Use Cases:**
+  - CreateUserUseCase: Create a new user
+  - UpdateUserUseCase: Update personal information
+  - DeleteUserUseCase: Delete User
+  - GetUserUseCase: Get user by id
+  - GetAllUsersUseCase: Get all users
+- **OUTs:** EventPublisher, UserRepositoryOutPort
+- **LISTENERs:** UserRegisteredListener
+- **Mapper:** UserMapperApplication
+- **Service:** UserService
 
-| **Categoría**              | **Tecnologías**                                          |
-| -------------------------- | -------------------------------------------------------- |
-| **Backend**                | Java 17, Spring Boot 3.5.7, Spring Data, Maven           |
-| **Base de Datos**          | MongoDB                          |                   |
-| **Testing**                | JUnit 5, Mockito, Jacoco, SonarQube     |
-| **Documentación**          | Swagger UI, Postman                                      |
-| **DevOps y Deploy**        | Docker, Kubernetes (K8s), GitHub Actions, Railway |
-| **Comunicación**           | REST API, Event-Driven Architecture con RabbitMQ           |
-| **Gestión y Colaboración** | Git/GitHub, Figma, Slack, Jira                           |
+### 🏛️ INFRASTRUCTURE (Infraestructura)
 
----
+**Purpose:** Implements the **technical details** that allow the system to function. It handles persistence, file storage, external communication, and configuration.
 
-## Estrategia de Versionamiento y Branching
+**Contains:**
+- **config:** RabbitConfig Configuration
+- **API/Controllers:** REST endpoints for user management.
+- **DTOs:** UserRequest, UserResponse
+- **Repositories:** Implementations using Spring Data MongoDB (UserRepository)
+- **External Services:** RabbitEventPublisher
+**Feature:** This layer DOES depend on frameworks and technologies (Spring Boot, MongoDB, Railway, etc.).
 
-Se implementa una estrategia de versionamiento basada en **GitFlow**, garantizando un flujo de desarrollo **colaborativo, trazable y controlado**.
 
-### Beneficios:
+The use of this architecture has the following benefits:
 
-- Permite trabajo paralelo sin conflictos
-- Mantiene versiones estables y controladas
-- Facilita correcciones urgentes (*hotfixes*)
-- Proporciona un historial limpio y entendible
+* ✅ **Separation of Concerns:** Distinct boundaries between logic and infrastructure.
+* ✅ **Maintainability:** Easier to update or replace specific components.
+* ✅ **Scalability:** Components can evolve independently.
+* ✅ **Testability:** The domain can be tested in isolation without a database or server.
 
----
-
-## Estrategia de Ramas (Git Flow)
-
-| **Rama**                | **Propósito**                            | **Recibe de**           | **Envía a**        | **Notas**                      |
-| ----------------------- | ---------------------------------------- | ----------------------- | ------------------ | ------------------------------ |
-| `main`                  | Código estable para PREPROD o Producción | `release/*`, `hotfix/*` | Despliegue         | Protegida con PR y CI exitoso  |
-| `develop`               | Rama principal de desarrollo             | `feature/*`             | `release/*`        | Base para integración continua |
-| `feature/*`             | Nuevas funcionalidades o refactors       | `develop`               | `develop`          | Se eliminan tras el merge      |
-| `release/*`             | Preparación de versiones estables        | `develop`               | `main` y `develop` | Incluye pruebas finales        |
-| `bugfix/*` o `hotfix/*` | Corrección de errores críticos           | `main`                  | `main` y `develop` | Parches urgentes               |
-
----
-
-## Convenciones de Nomenclatura
-
-### Develop Branches
-
-```
-feature/[nombre-funcionalidad]
-
-```
-
-**Ejemplos:**
-
-```
-- feature/driver-verification-kratos-um_23
-- feature/reputation-system-kratos-um_35
-
-```
-
-**Reglas:**
-
-* Descripción breve y clara
-
----
-
-## Convenciones de Commits
-
-### Formato Estándar
-
-```
-[tipo]: [descripción breve de la acción]
-```
-
-**Ejemplos:**
-
-```
-feat: implementar verificación de documentos de conductor
-fix: corregir cálculo de promedio de reputación
-```
-
----
-
-### Tipos de Commit
-
-| **Tipo**   | **Descripción**                      | **Ejemplo**                                           |
-| ----------- | ------------------------------------ | ----------------------------------------------------- |
-| `feat`      | Nueva funcionalidad                  | `feat: agregar endpoint de registro de vehículo`   |
-| `fix`       | Corrección de errores                | `fix: solucionar error en actualización de perfil` |
-| `docs`      | Cambios en documentación             | `docs: actualizar documentación de API`            |
-| `refactor`  | Refactorización sin cambio funcional | `refactor: optimizar consulta de usuarios`         |
-| `test`      | Pruebas unitarias o de integración   | `test: agregar tests para servicio de reputación`  |
-| `chore`     | Mantenimiento o configuración        | `chore: actualizar dependencias de Spring`         |
-
-**Reglas:**
-
-* Un commit = una acción completa
-* Usar modo imperativo ("agregar", "corregir", etc.)
-* Descripción clara de qué y dónde
-* Commits pequeños y frecuentes
-
----
-
-## Arquitectura del Proyecto
-
-El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desacoplada**, priorizando:
-
-* Separación de responsabilidades
-* Mantenibilidad
-* Escalabilidad
-* Facilidad de pruebas
-
----
-
-## Estructura de Capas
+## 📂 Clean - Hexagonal Structure
 
 ```
 📂 kratos_user_management_backend
@@ -207,179 +115,311 @@ El backend de **KRATOS_USER-MANAGEMENT** sigue una **arquitectura limpia y desac
  ┃
  ┗ 📄 pom.xml
 ```
----
 
-## Arquitectura Limpia - Organización de Capas
+# 📡 API Endpoints
 
-### DOMAIN (Dominio)
+For detailed documentation refer to our Swagger UI (Running locally at http://localhost:8080/swagger-ui.html).
 
-**Propósito:** Representa el **núcleo del negocio** y contiene los conceptos más importantes de la aplicación. Define **QUÉ** hace el sistema, no **CÓMO** lo hace.
+Data input & output
 
-**Contiene:**
+| Method   | URI               | Description                                    | Request Body / Params                                           |
+| :------- | :---------------- | :--------------------------------------------- | :-------------------------------------------------------------- |
+| `POST`   | `/users`          | Creates a new user profile.                    | `{ "name": "...", "email": "...", "password": "...", ... }`     |
+| `GET`    | `/users/{id}`     | Retrieves a user by their ID.                  | `id` (Path Variable)                                            |
+| `PUT`    | `/users/{id}`     | Updates an existing user profile.              | `id` (Path Variable) + `{ "name": "...", "email": "...", ... }` |
+| `DELETE` | `/users/{id}`     | Performs a logical deletion of the user.       | `id` (Path Variable)                                            |
+| `GET`    | `/users/allUsers` | Returns a list of users with optional filters. | `?name=...&role=...&status=...` (Optional Query Params)         |
 
-- **Entities:** User.
-- **Enums:** Role (STUDENT, PROFFESOR, ADMINISTRATOR), AccountState (ACTIVE, INACTIVE, PENDING, SUSPENDED), IdentificationType (TI, CC, PP, CE).
+### 📟 HTTP Status Codes
+Common status codes returned by the API.
 
-**Principio clave:** Esta capa NO debe depender de frameworks, bases de datos o tecnologías externas.
+| Code  | Status                    | Description                                           |
+| :---- | :------------------------ | :---------------------------------------------------- |
+| `200` | **OK**                    | Request processed successfully.                       |
+| `201` | **Created**               | User created successfully.                            |
+| `400` | **Bad Request**           | Invalid user data or missing parameters.              |
+| `401` | **Unauthorized**          | Missing or invalid authentication token.              |
+| `403` | **Forbidden**             | User does not have permission to perform this action. |
+| `404` | **Not Found**             | User ID not found.                                    |
+| `409` | **Conflict**              | Email already exists or conflicting user data.        |
+| `500` | **Internal Server Error** | Unexpected server-side error.                         |
 
----
+# 🔗 Connections with other Microservices
 
-### APPLICATION (Aplicación)
+This module does not work alone. It interacts with the RideCi Ecosystem via REST APIs and Message Brokers (RabbitMQ):
 
-**Propósito:** Encapsula la **lógica de aplicación** y define los **casos de uso** del sistema. Orquesta cómo se utiliza el dominio para resolver problemas específicos.
+1. Authentication Microservice: Responsible for receiving user data and constructing the UserDocument.
+2. Profiles Microservice: The Profiles Microservice depends on user-related data provided by other services.
+Specifically, it requires only the User ID and User Name in order to build and maintain user profile information.
+It does not handle authentication data directly; instead, it focuses exclusively on profile attributes and associations.
 
-**Contiene:**
+# Technologies
 
-- **Use Cases:**
-  - CreateUserUseCase: Crea un nuevo usuario
-  - UpdateUserUseCase: Actualiza información personal
-  - DeleteUserUseCase: Eliminar Usuario
-  - GetUserUseCase: Obtener usuario por id
-  - GetAllUsersUseCase: Obtener todos los usuarios
-- **OUTs:** EventPublisher, UserRepositoryOutPort
-- **LISTENERs:** UserRegisteredListener
-- **Mapper:** UserMapperApplication
-- **Service:** UserService
+The following technologies were used to build and deploy this module:
 
----
+### Backend & Core
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
 
-### INFRASTRUCTURE (Infraestructura)
+### Database
+![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
 
-**Propósito:** Implementa los **detalles técnicos** que permiten que el sistema funcione. Maneja persistencia, almacenamiento de archivos, comunicación externa y configuración.
+### DevOps & Infrastructure
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/kubernetes-%23326ce5.svg?style=for-the-badge&logo=kubernetes&logoColor=white)
+![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)
 
-**Contiene:**
-- **config:** Configuración RabbitConfig
-- **API/Controllers:** Endpoints REST para gestión de usuarios.
-- **DTOs:** UserRequest, UserResponse
-- **Repositories:** Implementaciones usando Spring Data MongoDB (UserRepository)
-- **External Services:** RabbitEventPublisher
-**Característica:** Esta capa SÍ depende de frameworks y tecnologías (Spring Boot, MongoDB, Railway, etc.).
+### CI/CD & Quality Assurance
+![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+![SonarQube](https://img.shields.io/badge/SonarQube-4E9BCD?style=for-the-badge&logo=sonarqube&logoColor=white)
+![JaCoCo](https://img.shields.io/badge/JaCoCo-Coverage-green?style=for-the-badge)
 
----
+### Documentation & Testing
+![Swagger](https://img.shields.io/badge/-Swagger-%23Clojure?style=for-the-badge&logo=swagger&logoColor=white)
+![Postman](https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white)
 
-### Beneficios de esta Arquitectura
+### Design 
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 
-| Característica                      | Beneficio                                                          |
-| ----------------------------------- | ------------------------------------------------------------------ |
-| **Independencia de Frameworks**     | El dominio no depende de Spring, MongoDB o cualquier tecnología    |
-| **Testabilidad**                    | Cada capa puede probarse de forma aislada con mocks                |
-| **Mantenibilidad**                  | Cambios en BD o framework no afectan la lógica de negocio          |
-| **Escalabilidad**                   | Fácil agregar nuevos casos de uso sin modificar código existente   |
-| **Claridad**                        | Responsabilidades bien definidas facilitan comprensión del código  |
-
----
-
-## Diagramas del Módulo
-
-### Diagrama de Contexto
-
-![Diagrama de Contexto](docs/uml/diagrama_contexto.png)
-
-**Explicación:**
-
-*[Pendiente de documentación]*
-
----
-
-### Diagrama de Clases
-
-![Diagrama de Clases](docs/uml/diagrama_clases.png)
-
-**Explicación:**
-
-*[Pendiente de documentación]*
+### Comunication & Project Management
+![Jira](https://img.shields.io/badge/jira-%230A0FFF.svg?style=for-the-badge&logo=jira&logoColor=white)
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=slack&logoColor=white)
 
 ---
 
-### Diagrama de Componentes Específico
+# 🌿 Branches Strategy & Structure
 
-![Diagrama de Componentes](docs/uml/diagrama_componentes.png)
+This module follows a strict branching strategy based on Gitflow to ensure the ordered versioning,code quality and continous integration.
 
-**Explicación:**
 
-*[Pendiente de documentación]*
 
----
+| **Branch**                | **Purpose**                            | **Receive of**           | **Sent to**        | **Notes**                      |
+| ----------------------- | ---------------------------------------- | ----------------------- | ------------------ | ------------------------------ |
+| `main`                  | 🏁 Stable code for preproduction or Production | `release/*`, `hotfix/*` | 🚀 Production      | 🔐 Protected with PR y successful CI   |
+| `develop`               | 🧪 Main developing branch             | `feature/*`             | `release/*`        | 🔄 Base to continous deployment |
+| `feature/*`             | ✨ New functions or refactors  to be implemented       | `develop`               | `develop`          | 🧹 Are deleted after merge to develop      |
+| `release/*`             | 📦 Release preparation & final polish.      | `develop`               | `main` and `develop` | 🧪  Includes final QA. No new features added here.     |
+| `bugfix/*` or `hotfix/*` | 🛠️ Critical fixes for production         | `main`                  | `main` and `develop` | ⚡ Urgent patches. Highest priority
 
-### Diagrama de Despliegue
+# 🏷️ Naming Conventions
 
-![Diagrama de Despliegue](docs/uml/diagrama_despliegue.png)
+## 🌿 Branch Naming
 
-**Explicación:**
+### ✨ Feature Branches
+Used for new features or non-critical improvements.
 
-*[Pendiente de documentación]*
+**Format:**
+`feature/[shortDescription]`
 
----
+**Examples:**
+- `feature/authenticationModule`
+- `feature/securityService`
 
-### Diagrama de Bases de Datos
+**Rules:**
+* 🧩 **Case:** strictly *camelCase* (lowercase with hyphens).
+* ✍️ **Descriptive:** Short and meaningful description.
 
-![Diagrama de Bases de Datos](docs/uml/diagrama_bd.png)
+## 🔥 Commit Conventions
 
-**Explicación:**
+### 🚀 Standard Format
 
-*[Pendiente de documentación]*
-
----
-
-## Instalación
-
-### Prerrequisitos
-
-- Java 17
-- Maven
-- MongoDB
-- Git
-
-### Clonar el repositorio
-
-```bash
-git clone https://github.com/RIDECI/KRATOS_USER-MANAGEMENT_BACKEND.git
-cd KRATOS_USER-MANAGEMENT_BACKEND
+```
+[type]: [short description of the action]
 ```
 
-### Instalar dependencias
+**Ejemplos:**
 
-```bash
-mvn clean install
+```
+feat: implement driver document verification
+fix: correct reputation average calculation
 ```
 
 ---
 
-## Uso
+### 🏷️ Commit Types
 
-```bash
-mvn clean install
+| **Type**   | **Description**                        | **Example**                               |
+| ---------- | -------------------------------------- | ----------------------------------------- |
+| `feat`     | New functionality                      | `feat: add vehicle registration endpoint` |
+| `fix`      | Bug fixes                              | `fix: fix issue in profile update`        |
+| `docs`     | Documentation changes                  | `docs: update API documentation`          |
+| `refactor` | Refactoring without functional changes | `refactor: optimize user query`           |
+| `test`     | Unit or integration tests              | `test: add tests for reputation service`  |
+| `chore`    | Maintenance or configuration           | `chore: update Spring dependencies`       |
+
+
+**Rules**
+
+* One commit = one complete action
+* Use the imperative mood (“add”, “fix”, “update”, etc.)
+* Provide a clear description of what and where
+* Keep commits small and frequent
+
+# 📐 System Architecture & Design
+
+This section provides a visual representation of the module's architecture ilustrating the base diagrams to show the application structure and components flow.
+
+### 🧩 Context Diagram
+---
+Text
+
+![Context Diagram](./docs/uml/diagrama_contexto.png)
+
+### 🧩 Specific Components Diagram
+---
+This diagram illustrates the structure and dependencies between components in the User Management and Authentication microservices.
+Both services apply Hexagonal Architecture (Ports & Adapters), ensuring separation of concerns, maintainability, and independent testability.
+
+*Authentication*:
+
+This module handles user authentication and token generation. It is organized into controllers, adapters, use cases, and outbound ports.
+
+* Controllers:
+    * Auth Controller
+      Receives and processes all HTTP requests related to login and registration.
+      It converts these inputs into internal DTOs and forwards them to the adapters.
+
+When applying a hexagonal architecture, before developing the use cases, we need adapter components:
+
+* Use Cases:
+
+    * Login Use Case:
+      Validates credentials and triggers token generation.
+
+    * Register User Use Case:
+      Registers a new user in the system through the outbound port.
+
+    * Generate Token Use Case:
+      Issues security tokens (e.g., JWT) after a successful authentication.
+
+* Ports:
+
+    * Database Port:
+      Allows the use cases to persist or retrieve authentication-related data.
+
+*User Management*:
+
+This service handles user lifecycle (create, update, delete, retrieve) following strict hexagonal architecture separation.
+
+* Controllers:
+
+  * User Controller:
+    Central entry point for all user-related API requests.
+    It delegates the execution to the User Adapter and relies on DTOs for communication.
+
+* Use Cases:
+
+  These represent application-specific business rules:
+
+   * Create User Use Case:
+    Handles registration logic within the User Management context.
+
+   * Update User Use Case:
+    Manages modifications to user profiles.
+
+   * Delete User Use Case:
+    Performs logical deletion of a user.
+
+   * Get User Use Case:
+    Retrieves user information by ID.
+
+   * Get Users Use Case:
+    Provides user listing with optional filters.
+
+* Ports
+
+  Ports define what the application expects from its infrastructure:
+
+  * User Repository Port:
+    Interface that declares what operations the domain needs from the persistence layer.
+
+
+
+![Specific Components Diagram](./docs/uml/diagrama_componentes.png)
+
+### 🧩 Use Cases Diagram
+---
+This diagram presents the main functionalities defined by each actor. This facilitates a better understanding when implementing the module's multiple functions, as well as identifying and separating each actor's roles when using the application.
+
+![Use Cases Diagram](./docs/uml/diagrama_casos.png)
+
+### 🧩 Class Diagram
+---
+Based on the Specific Components diagram, we created the class diagram, where we defined an Builder design pattern that will help to create users in the system.
+
+![Class Diagram](./docs/uml/diagrama_clases.png)
+
+### 🧩 Data Base Diagram
+---
+
+This diagram represents how the data is stored, where we will find the multiple documents, and the data that will be stored in an embedded or referenced manner.
+
+![Data Base Diagram](./docs/uml/diagrama_bd.png)
+
+
+### 🧩 Sequence Diagrams
+---
+![Sequence Diagrams](./docs/uml/)
+
+
+### 🧩 Specific Deploy Diagram
+---
+This diagram illustrates the cloud deployment architecture and workflow of the Authentication and User Management module.
+![Specific Deploy Diagram](./docs/uml/diagrama_despliegue.png)
+
+# 🧪 Testing
+
+Testing is a essential part of the project functionability, this part will show the code coverage and code quality analazing with tools like JaCoCo and SonarQube.
+
+### 📊 Code Coverage (JaCoCo)
+---
+![JaCoCo](./docs/uml/jacoco.png)
+
+
+### 🔍 Static Analysis (SonarQube)
+![SonarQube](./docs/uml/)
+
+# 🚀 Getting Started
+
+This section guides you through setting ip the project locally. This project requires **Java 17**. If you have a different version, you can change it or we recommend using **Docker** to ensure compatibility before compile.
+
+### Clone & open repository
+
+``` bash
+git clone https://github.com/RIDECI/NEMESIS_ROUTES_AND_TRACKING_BACKEND.git
 ```
-Para ejecutar el proyecto:
 
-```bash
-mvn spring-boot:run
+``` bash
+cd NEMESIS_ROUTES_AND_TRACKING_BACKEND
 ```
-Ó:
 
-```bash
+You can open it on your favorite IDE
+
+### Dockerize the project
+
+Dockerize before compile the project avoid configuration issues and ensure environment consistency.
+
+``` bash
 docker compose up -d
 ```
 
----
+### Install dependencies & compile project
 
-## API Endpoints
+Download dependencies and compile the source code.
 
-### Gestión de Usuarios
-- `POST /users` - Crear perfil de usuario
-- `GET /users/{id}` - Obtener usuario por ID
-- `PUT /users/{id}` - Actualizar perfil de usuario
-- `DELETE /users/{id}` - Eliminar usuario (lógico)
-- `GET /users/allUsers` - Listar usuarios con filtros
+``` bash
+mvn clean install
+```
 
----
-Pruebas Unitarias
+``` bash
+mvn clean compile
+```
 
-![img.png](docs/img.png)
+### To run the project
+Start the Spring Boot server
 
----
+``` bash
+mvn spring-boot:run
+```
 
-Reporte Jacoco
-
-![img.png](docs/img2.png)
-**RidECI** - Conectando a la comunidad para moverse de forma segura, económica y sostenible.
