@@ -124,11 +124,11 @@ Data input & output
 
 | Method   | URI               | Description                                    | Request Body / Params                                           |
 | :------- | :---------------- | :--------------------------------------------- | :-------------------------------------------------------------- |
-| `POST`   | `/users`          | Creates a new user profile.                    | `{ "name": "...", "email": "...", "password": "...", ... }`     |
+| `POST`   | `/users`          | Creates a new user profile.                    | `{ "name": "...", "email": "...", ... }`     |
 | `GET`    | `/users/{id}`     | Retrieves a user by their ID.                  | `id` (Path Variable)                                            |
 | `PUT`    | `/users/{id}`     | Updates an existing user profile.              | `id` (Path Variable) + `{ "name": "...", "email": "...", ... }` |
 | `DELETE` | `/users/{id}`     | Performs a logical deletion of the user.       | `id` (Path Variable)                                            |
-| `GET`    | `/users/allUsers` | Returns a list of users with optional filters. | `?name=...&role=...&status=...` (Optional Query Params)         |
+| `GET`    | `/users/allUsers` | Returns a list of users with optional filters. |        
 
 ### 📟 HTTP Status Codes
 Common status codes returned by the API.
@@ -360,7 +360,11 @@ This diagram represents how the data is stored, where we will find the multiple 
 
 ### 🧩 Sequence Diagrams
 ---
-![Sequence Diagrams](./docs/uml/)
+![Sequence Diagrams](./docs/uml/CreateUser_SequenceDiagram%20(1).png)
+![Sequence Diagrams](./docs/uml/UpdateUser_SequenceDiagram%20(1).png)
+![Sequence Diagrams](./docs/uml/DeleteUser_SequenceDiagram%20(1).png)
+![Sequence Diagrams](./docs/uml/GetUserByID_SequenceDiagram.png)
+![Sequence Diagrams](./docs/uml/GetAllUser_SequenceDiagram.png)
 
 
 ### 🧩 Specific Deploy Diagram
