@@ -40,7 +40,7 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
         UserDocument savedDocument = userRepository.save(userDocument);
 
         UserEvent userCreatedEvent = userMapper.toUserEvent(savedDocument);
-
+        //FUNCIONALIDAD DE PUBLICAR EVENTO
         eventPublisher.publish(userCreatedEvent, "user.created");
         
         return userMapper.toDomain(savedDocument);
