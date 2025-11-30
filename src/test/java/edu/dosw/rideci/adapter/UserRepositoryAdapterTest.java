@@ -56,56 +56,56 @@ public class UserRepositoryAdapterTest {
 
         LocalDateTime now = LocalDateTime.of(2025, 11, 26, 12, 0);
         user = User.builder()
-            .userId(1000100444L)
-            .name("Juan Sebastian Puentes Julio")
-            .email("juan.puentes@mail.escuelaing.edu.co")
-            .identificationType(IdentificationType.CC)
-            .identificationNumber("1011084070")
-            .phoneNumber("3235207883")
-            .address("Calle 187A # 8-46")
-            .role(Role.STUDENT)
-            .createdAt(now)
-            .phoneNumber("3235207883")
-            .build();
+                .userId(1000100444L)
+                .name("Juan Sebastian Puentes Julio")
+                .email("juan.puentes@mail.escuelaing.edu.co")
+                .identificationType(IdentificationType.CC)
+                .identificationNumber("1011084070")
+                .phoneNumber("3235207883")
+                .address("Calle 187A # 8-46")
+                .role(Role.STUDENT)
+                .createdAt(now)
+                .phoneNumber("3235207883")
+                .build();
 
         savedUserDocument = UserDocument.builder()
-            .userId(1000100444L)
-            .name("Juan Sebastian Puentes Julio")
-            .email("juan.puentes@mail.escuelaing.edu.co")
-            .identificationType(IdentificationType.CC)
-            .identificationNumber("1011084070")
-            .phoneNumber("3235207883")
-            .address("Calle 187A # 8-46")
-            .role(Role.STUDENT)
-            .state(AccountState.PENDING)
-            .createdAt(now)
-            .build();
+                .userId(1000100444L)
+                .name("Juan Sebastian Puentes Julio")
+                .email("juan.puentes@mail.escuelaing.edu.co")
+                .identificationType(IdentificationType.CC)
+                .identificationNumber("1011084070")
+                .phoneNumber("3235207883")
+                .address("Calle 187A # 8-46")
+                .role(Role.STUDENT)
+                .state(AccountState.PENDING)
+                .createdAt(now)
+                .build();
 
         updatedUser = User.builder()
-            .userId(1000100444L)
-            .name("Juan S. Puentes J.")
-            .email("juan.puentes@mail.escuelaing.edu.co")
-            .identificationType(IdentificationType.CC)
-            .identificationNumber("1011084070")
-            .phoneNumber("3235207883")
-            .address("Calle 187A # 8-46")
-            .role(Role.STUDENT)
-            .createdAt(now)
-            .phoneNumber("3235207883")
-            .build();
+                .userId(1000100444L)
+                .name("Juan S. Puentes J.")
+                .email("juan.puentes@mail.escuelaing.edu.co")
+                .identificationType(IdentificationType.CC)
+                .identificationNumber("1011084070")
+                .phoneNumber("3235207883")
+                .address("Calle 187A # 8-46")
+                .role(Role.STUDENT)
+                .createdAt(now)
+                .phoneNumber("3235207883")
+                .build();
 
         updatedUserDocument = UserDocument.builder()
-            .userId(1000100444L)
-            .name("Juan S. Puentes J.")
-            .email("juan.puentes@mail.escuelaing.edu.co")
-            .identificationType(IdentificationType.CC)
-            .identificationNumber("1011084070")
-            .phoneNumber("3235207883")
-            .address("Calle 187A # 8-46")
-            .role(Role.STUDENT)
-            .state(AccountState.PENDING)
-            .createdAt(now)
-            .build();
+                .userId(1000100444L)
+                .name("Juan S. Puentes J.")
+                .email("juan.puentes@mail.escuelaing.edu.co")
+                .identificationType(IdentificationType.CC)
+                .identificationNumber("1011084070")
+                .phoneNumber("3235207883")
+                .address("Calle 187A # 8-46")
+                .role(Role.STUDENT)
+                .state(AccountState.PENDING)
+                .createdAt(now)
+                .build();
         userDocumentList = List.of(savedUserDocument);
         userList = List.of(user);
 
@@ -126,7 +126,7 @@ public class UserRepositoryAdapterTest {
     @DisplayName("Update User - Success")
     @Test
     void shouldUpdateUserSuccessfully() {
-        when(userRepository.findById(1000100444L)).thenReturn(Optional.of(savedUserDocument));
+        when(userRepository.findByUserId(1000100444L)).thenReturn(Optional.of(savedUserDocument));
         when(userRepository.save(any(UserDocument.class))).thenReturn(updatedUserDocument);
         when(userMapper.toDomain(any(UserDocument.class))).thenReturn(updatedUser);
 
@@ -141,15 +141,15 @@ public class UserRepositoryAdapterTest {
 
         userRepositoryAdapter.deleteById(1000100444L);
 
-        verify(userRepository, times(1)).deleteById(1000100444L);
+        verify(userRepository, times(1)).deleteByUserId(1000100444L);
         verify(eventPublisher, times(1)).publish(any(), eq("user.deleted"));
-        
+
     }
 
     @DisplayName("Find User by ID - Success")
     @Test
     void shouldFindUserByIdSuccessfully() {
-        when(userRepository.findById(1000100444L)).thenReturn(Optional.of(savedUserDocument));
+        when(userRepository.findByUserId(1000100444L)).thenReturn(Optional.of(savedUserDocument));
         when(userMapper.toDomain(any(UserDocument.class))).thenReturn(user);
         User result = userRepositoryAdapter.findById(1000100444L);
         assertEquals(user, result);
