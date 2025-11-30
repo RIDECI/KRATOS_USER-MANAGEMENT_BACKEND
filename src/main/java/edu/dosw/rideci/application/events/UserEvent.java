@@ -11,8 +11,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class UserEvent {
 
+    private String id;
+
     private Long userId;
-    
+
     private String name;
     private String email;
 
