@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserSyncFailedEvent {
     private Long userId;
+    private String email;
     private String reason;
 }

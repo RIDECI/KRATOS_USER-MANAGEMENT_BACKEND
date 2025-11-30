@@ -31,6 +31,7 @@ public class UserSyncErrorHandler implements RabbitListenerErrorHandler {
             UserEvent userEvent = (UserEvent) message.getPayload();
             UserSyncFailedEvent failedEvent = UserSyncFailedEvent.builder()
                     .userId(userEvent.getUserId())
+                    .email(userEvent.getEmail())
                     .reason(exception.getCause() != null ? exception.getCause().getMessage() : exception.getMessage())
                     .build();
 
