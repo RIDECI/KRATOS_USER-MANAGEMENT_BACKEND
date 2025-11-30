@@ -36,7 +36,7 @@ public class UserSyncErrorHandler implements RabbitListenerErrorHandler {
                     .build();
 
             // Publicar evento de compensación
-            eventPublisher.publish(failedEvent, "auth.user.sync.failed");
+            eventPublisher.publish(failedEvent, "user.sync.failed");
 
             log.info("Compensation event published for userId: {}", userEvent.getUserId());
         } else {
