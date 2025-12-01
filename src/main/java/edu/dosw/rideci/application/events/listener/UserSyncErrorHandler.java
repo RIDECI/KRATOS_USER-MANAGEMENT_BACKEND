@@ -25,7 +25,8 @@ public class UserSyncErrorHandler implements RabbitListenerErrorHandler {
     public Object handleError(org.springframework.amqp.core.Message amqpMessage, Channel channel,
             Message<?> message, ListenerExecutionFailedException exception) {
 
-        log.error("Retries exhausted for UserEvent. Publishing compensation event.", exception);
+        log.error("Retries exhausted for UserEvent. Publishing compensation event. Error: {}",
+                exception.getCause() != null ? exception.getCause().getMessage() : exception.getMessage());
 
         if (message.getPayload() instanceof UserEvent) {
             UserEvent userEvent = (UserEvent) message.getPayload();

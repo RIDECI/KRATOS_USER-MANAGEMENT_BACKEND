@@ -17,6 +17,7 @@ public class UserEvent {
 
     private String name;
     private String email;
+    private String recoveryEmail;
 
     private String identificationType;
     private String identificationNumber;

@@ -24,6 +24,7 @@ public class UserDocument {
     private String name;
     @Indexed(unique = true)
     private String email;
+    private String recoveryEmail;
     private IdentificationType identificationType;
     private String identificationNumber;
     private String phoneNumber;
