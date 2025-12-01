@@ -1,7 +1,5 @@
 package edu.dosw.rideci.application.events.listener;
 
-import java.time.LocalDateTime;
-
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -22,22 +20,29 @@ public class UserRegisteredListener {
 
     private final CreateUserUseCase createUserUseCase;
 
-    @RabbitListener(queues = "user.sync.queue")
+    @RabbitListener(queues = "user.sync.queue", errorHandler = "userSyncErrorHandler")
     public void handleUserRegistered(UserEvent event) {
-        System.out.println("Received UserEvent: " + event);
-        log.info("UserRegisteredListener handled event: {}", event);
-        User eventUser = User.builder()
-            .userId(event.getUserId())
-            .name(event.getName())
-            .email(event.getEmail())
-            .identificationType(IdentificationType.valueOf(event.getIdentificationType()))
-            .identificationNumber(event.getIdentificationNumber())
-            .phoneNumber(event.getPhoneNumber())
-            .address(event.getAddress())
-            .dateOfBirth(LocalDateTime.now())
-            .role(Role.valueOf(event.getRole()))
-            .build();
-        createUserUseCase.createUser(eventUser);//MALPARIDO PANA RABBIT
+        try {
+            log.info("Received UserEvent: {}", event);
+            User eventUser = User.builder()
+                    .userId(event.getUserId())
+                    .name(event.getName())
+                    .email(event.getEmail())
+                    .recoveryEmail(event.getRecoveryEmail())
+                    .identificationType(IdentificationType.valueOf(event.getIdentificationType()))
+                    .identificationNumber(event.getIdentificationNumber())
+                    .phoneNumber(event.getPhoneNumber())
+                    .address(event.getAddress())
+                    .role(Role.valueOf(event.getRole()))
+                    .build();
+            createUserUseCase.createUser(eventUser);
+            log.info("Successfully processed UserEvent for userId: {}", event.getUserId());
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid data in UserEvent. Discarding message. Error: {}", e.getMessage());
+        } catch (Exception e) {
+            log.error("Error processing UserEvent. Requesting retry. Error: {}", e.getMessage());
+            throw e;
+        }
     }
-    
+
 }

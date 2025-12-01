@@ -18,18 +18,20 @@ import lombok.Data;
 public class UserDocument {
 
     @Id
+    private String id;
+    @Indexed(unique = true)
     private Long userId;
     private String name;
     @Indexed(unique = true)
     private String email;
+    private String recoveryEmail;
     private IdentificationType identificationType;
     private String identificationNumber;
-    private LocalDateTime dateOfBirth;
     private String phoneNumber;
     private String address;
     private LocalDateTime createdAt;
-    
+
     private Role role;
     private AccountState state;
-    
+
 }

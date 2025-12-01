@@ -15,18 +15,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserResponse {
-    
+
+    private String id;
     private Long userId;
     private String name;
     private String email;
+    private String recoveryEmail;
     private IdentificationType identificationType;
     private String identificationNumber;
-    private LocalDateTime dateOfBirth;
     private String phoneNumber;
     private String address;
     private LocalDateTime createdAt;
-    
+
     private Role role;
     private AccountState state;
-    
+
 }

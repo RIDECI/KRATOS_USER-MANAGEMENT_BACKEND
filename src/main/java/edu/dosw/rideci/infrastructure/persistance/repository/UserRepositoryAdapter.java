@@ -15,8 +15,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Repository
-public class UserRepositoryAdapter implements UserRepositoryOutPort{
-    
+public class UserRepositoryAdapter implements UserRepositoryOutPort {
+
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final RabbitEventPublisher eventPublisher;
@@ -25,38 +25,38 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
     public User save(User user) {
 
         UserDocument userDocument = UserDocument.builder()
-            .userId(user.getUserId())
-            .name(user.getName())
-            .email(user.getEmail())
-            .identificationType(user.getIdentificationType())
-            .identificationNumber(user.getIdentificationNumber())
-            .dateOfBirth(user.getDateOfBirth())
-            .address(user.getAddress())
-            .role(user.getRole())
-            .state(AccountState.PENDING)
-            .phoneNumber(user.getPhoneNumber())
-            .createdAt(LocalDateTime.now())
-            .build();
+                .userId(user.getUserId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .recoveryEmail(user.getRecoveryEmail())
+                .identificationType(user.getIdentificationType())
+                .identificationNumber(user.getIdentificationNumber())
+                .address(user.getAddress())
+                .role(user.getRole())
+                .state(AccountState.PENDING)
+                .phoneNumber(user.getPhoneNumber())
+                .createdAt(LocalDateTime.now())
+                .build();
         System.out.println("Saving user: " + userDocument);
         UserDocument savedDocument = userRepository.save(userDocument);
 
         UserEvent userCreatedEvent = userMapper.toUserEvent(savedDocument);
-
+        // FUNCIONALIDAD DE PUBLICAR EVENTO
         eventPublisher.publish(userCreatedEvent, "user.created");
-        
+
         return userMapper.toDomain(savedDocument);
     }
 
     @Override
     public User updateUser(Long id, User user) {
-        UserDocument actualUser = userRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        UserDocument actualUser = userRepository.findByUserId(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         actualUser.setName(user.getName());
         actualUser.setEmail(user.getEmail());
+        actualUser.setRecoveryEmail(user.getRecoveryEmail());
         actualUser.setIdentificationType(user.getIdentificationType());
         actualUser.setIdentificationNumber(user.getIdentificationNumber());
-        actualUser.setDateOfBirth(user.getDateOfBirth());
         actualUser.setAddress(user.getAddress());
         actualUser.setPhoneNumber(user.getPhoneNumber());
         actualUser.setRole(user.getRole());
@@ -72,19 +72,19 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort{
 
     @Override
     public void deleteById(Long userId) {
-        userRepository.deleteById(userId);
+        userRepository.deleteByUserId(userId);
 
         UserEvent userDeletedEvent = UserEvent.builder()
-            .userId(userId)
-            .build();
+                .userId(userId)
+                .build();
 
-        eventPublisher.publish(userDeletedEvent,"user.deleted");
+        eventPublisher.publish(userDeletedEvent, "user.deleted");
     }
 
     @Override
     public User findById(Long userId) {
-        UserDocument userDocument = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        UserDocument userDocument = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
         return userMapper.toDomain(userDocument);
     }
 

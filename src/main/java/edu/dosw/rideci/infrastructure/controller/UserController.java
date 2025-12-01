@@ -24,8 +24,6 @@ import edu.dosw.rideci.infrastructure.controller.dto.Request.UserRequest;
 import edu.dosw.rideci.infrastructure.controller.dto.Response.UserResponse;
 import lombok.RequiredArgsConstructor;
 
-
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/users")
@@ -40,7 +38,7 @@ public class UserController {
 
     @PostMapping("")
     public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest request) {
-        
+
         User user = userMapper.toDomain(request);
         User createdUser = createUserUseCase.createUser(user);
         UserResponse response = userMapper.toResponse(createdUser);
@@ -64,8 +62,6 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-
-
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         User user = getUserUseCase.getUserById(id);
@@ -78,9 +74,8 @@ public class UserController {
 
         List<User> users = getAllUsersUseCase.getAllUsers();
         List<UserResponse> responses = userMapper.toResponseList(users);
-        
+
         return ResponseEntity.ok(responses);
     }
-    
 
 }
