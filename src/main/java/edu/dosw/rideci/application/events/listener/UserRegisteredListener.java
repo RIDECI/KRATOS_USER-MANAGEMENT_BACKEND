@@ -28,6 +28,7 @@ public class UserRegisteredListener {
                     .userId(event.getUserId())
                     .name(event.getName())
                     .email(event.getEmail())
+                    .recoveryEmail(event.getRecoveryEmail())
                     .identificationType(IdentificationType.valueOf(event.getIdentificationType()))
                     .identificationNumber(event.getIdentificationNumber())
                     .phoneNumber(event.getPhoneNumber())

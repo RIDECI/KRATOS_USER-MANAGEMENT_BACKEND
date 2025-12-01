@@ -28,6 +28,7 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort {
                 .userId(user.getUserId())
                 .name(user.getName())
                 .email(user.getEmail())
+                .recoveryEmail(user.getRecoveryEmail())
                 .identificationType(user.getIdentificationType())
                 .identificationNumber(user.getIdentificationNumber())
                 .address(user.getAddress())
@@ -53,6 +54,7 @@ public class UserRepositoryAdapter implements UserRepositoryOutPort {
 
         actualUser.setName(user.getName());
         actualUser.setEmail(user.getEmail());
+        actualUser.setRecoveryEmail(user.getRecoveryEmail());
         actualUser.setIdentificationType(user.getIdentificationType());
         actualUser.setIdentificationNumber(user.getIdentificationNumber());
         actualUser.setAddress(user.getAddress());

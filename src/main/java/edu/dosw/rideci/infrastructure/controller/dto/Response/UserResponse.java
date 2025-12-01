@@ -20,6 +20,7 @@ public class UserResponse {
     private Long userId;
     private String name;
     private String email;
+    private String recoveryEmail;
     private IdentificationType identificationType;
     private String identificationNumber;
     private String phoneNumber;
